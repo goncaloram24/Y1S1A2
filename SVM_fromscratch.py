@@ -32,6 +32,8 @@ class Support_Vector_Machine:
         self.min_feature_value = min(all_data)
         all_data = None
 
+        # support vectors yi(xi.w+b) = 1
+
         step_sizes = [self.max_feature_value * 0.1,
                       self.max_feature_value * 0.01,
                       # point of expense:
@@ -62,23 +64,23 @@ class Support_Vector_Machine:
                                 yi = i
                                 if not yi*(np.dot(w_t, xi)+b) >= 1:
                                     found_option = False
+
                         if found_option:
                             opt_dict[np.linalg.norm(w_t)] = [w_t, b]
 
-                    if w[0] < 0:
-                        optimized = True
-                        print('Optimized a step.')
-                    else:
-                        w = w - step
 
-                norms = sorted([n for n in opt_dict])
+                if w[0] < 0:
+                    optimized = True
+                    print('Optimized a step.')
+                else:
+                    w = w - step
 
-                opt_choice = opt_dict[norms[0]]
-                self.w = opt_choice[0]
-                self.b = opt_choice[1]
-                latest_optimum = opt_choice[0][0] + step * 2
+            norms = sorted([n for n in opt_dict])
 
-
+            opt_choice = opt_dict[norms[0]]
+            self.w = opt_choice[0]
+            self.b = opt_choice[1]
+            latest_optimum = opt_choice[0][0] + step * 2
 
 
 
@@ -88,7 +90,6 @@ class Support_Vector_Machine:
         classification = np.sign(np.dot(np.array(features), self.w) +  self.b)
         if classification != 0 and self.visualization:
             self.ax.scatter(features[0], features[1], s=200, marker='*', c=self.colors[classification])
-
         return classification
 
     def visualize(self):
@@ -110,19 +111,19 @@ class Support_Vector_Machine:
         # positive support vector hyperplane
         psv1 = hyperplane(hyp_x_min, self.w, self.b, 1)
         psv2 = hyperplane(hyp_x_max, self.w, self.b, 1)
-        self.ax.plot([hyp_x_min, hyp_x_max], [psv1, psv2])
+        self.ax.plot([hyp_x_min, hyp_x_max], [psv1, psv2], 'k')
 
         # (w.x+b) = -1
         # negative support vector hyperplane
         nsv1 = hyperplane(hyp_x_min, self.w, self.b, -1)
         nsv2 = hyperplane(hyp_x_max, self.w, self.b, -1)
-        self.ax.plot([hyp_x_min, hyp_x_max], [nsv1, nsv2])
+        self.ax.plot([hyp_x_min, hyp_x_max], [nsv1, nsv2], 'k')
 
         # (w.x+b) = 0
         # decision boundary support vector hyperplane
         db1 = hyperplane(hyp_x_min, self.w, self.b, 0)
         db2 = hyperplane(hyp_x_max, self.w, self.b, 0)
-        self.ax.plot([hyp_x_min, hyp_x_max], [db1, db2])
+        self.ax.plot([hyp_x_min, hyp_x_max], [db1, db2], 'y--')
 
         plt.show()
 
@@ -136,6 +137,19 @@ data_dict = {-1:np.array([[1, 7],
 
 svm = Support_Vector_Machine()
 svm.fit(data=data_dict)
+
+predict_us = [[0,10],
+              [1,3],
+              [3,4],
+              [3,5],
+              [5,5],
+              [5,6],
+              [6,-5],
+              [5,8]]
+
+for p in predict_us:
+    svm.predict(p)
+
 svm.visualize()
 
 
