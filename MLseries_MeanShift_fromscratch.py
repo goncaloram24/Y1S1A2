@@ -4,6 +4,8 @@ style.use('ggplot')
 import numpy as np
 from sklearn.datasets.samples_generator import make_blobs
 import random
+from sklearn.cluster import MeanShift
+
 
 centers = random.randrange(2, 5)
 print(centers)
@@ -28,7 +30,7 @@ colors = 10*["g", "r", "c", "b", "k", "y", "m"]
 
 
 class Mean_Shift():
-    def __init__(self, radius=None, radius_norm_step = 100):
+    def __init__(self, radius=None, radius_norm_step=100):
         self.radius = radius
         self.radius_norm_step = radius_norm_step
 
@@ -127,6 +129,9 @@ clf.fit(X)
 
 centroids = clf.centroids
 
+# Figure 1
+plt.figure()
+
 for classification in clf.classifications:
     color = colors[classification]
     for featureset in clf.classifications[classification]:
@@ -138,6 +143,25 @@ for classification in clf.classifications:
 for c in centroids:
     plt.scatter(centroids[c][0], centroids[c][1], color='k', marker='*', s=150)
 
+clf2 = MeanShift()
+clf2.fit(X)
+
+cluster_centers = clf2.cluster_centers_
+
+# Figure 2
+plt.figure()
+
+for i in range(len(X)):
+    label = clf2.labels_[i]
+    color = colors[label]
+    plt.scatter(X[i][0], X[i][1], marker='x', color=color, s=150, linewidths=5)
+
+for c in range(cluster_centers.shape[0]):
+    plt.scatter(cluster_centers[c][0], cluster_centers[c][1], color='k', marker='*', s=150)
+
+
 plt.show()
+
+
 
 
